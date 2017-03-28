@@ -1,24 +1,11 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-        mavenLocal()
-    }
-    dependencies {
-        classpath "org.biocode:gradle-fims:0.1.1-dev.1.uncommitted+9b5648a"
-    }
-}
+import org.ajoberstar.grgit.Grgit
 
 plugins {
     id "groovy"
     id "java-gradle-plugin"
-    id 'maven-publish'
+    id "maven-publish"
+    id "org.ajoberstar.release-opinion" version "1.7.0"
 }
-
-apply plugin: "org.biocode.fims"
 
 repositories {
     mavenCentral()
@@ -53,3 +40,11 @@ gradlePlugin {
         }
     }
 }
+
+group = "org.biocode"
+
+release {
+    grgit = Grgit.open(currentDir: project.file('.'))
+}
+
+tasks.release.dependsOn "build", "publish"
