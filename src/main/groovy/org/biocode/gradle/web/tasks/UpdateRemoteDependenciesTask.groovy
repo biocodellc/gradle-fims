@@ -16,8 +16,8 @@ class UpdateRemoteDependenciesTask extends DefaultTask {
 
     @TaskAction
     def update() {
-        ssh.run {
-            session(remote) {
+        project.ssh.run {
+            project.session(remote) {
                 execute "/bin/rm -f " + location + "*"
                 put from: project.configurations.server.incoming.getFiles(), into: location
             }

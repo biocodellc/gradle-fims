@@ -1,4 +1,4 @@
-package org.biocode.gradle.fims.tasks
+package org.biocode.gradle.app.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction

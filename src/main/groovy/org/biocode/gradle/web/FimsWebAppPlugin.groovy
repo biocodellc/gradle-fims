@@ -1,6 +1,14 @@
 package org.biocode.gradle.web
 
+import org.biocode.gradle.web.tasks.FatWarTask
+import org.biocode.gradle.web.tasks.FimsDeployLocalTask
+import org.biocode.gradle.web.tasks.FimsDeployTask
+import org.biocode.gradle.web.tasks.FimsDevDeployTask
+import org.biocode.gradle.web.tasks.FimsMinifyJsTask
 import org.biocode.gradle.web.tasks.GenerateRestApiDocsTask
+import org.biocode.gradle.web.tasks.MinifyAppJsTask
+import org.biocode.gradle.web.tasks.MinifyExternalJsTask
+import org.biocode.gradle.web.tasks.RestartRemoteJettyTask
 import org.biocode.gradle.web.tasks.UpdateRemoteDependenciesTask
 import org.biocode.gradle.web.tasks.WebJsLibTask
 import org.gradle.api.Plugin
@@ -14,6 +22,7 @@ class FimsWebAppPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         configureDependencies(project)
+        configureDefaults(project)
 
         addProdJsLibTask(project)
         addDevJsLibTask(project)
@@ -21,13 +30,22 @@ class FimsWebAppPlugin implements Plugin<Project> {
         project.task("generateRestApiDocs", type: GenerateRestApiDocsTask)
         project.task("updateDependencies", type: UpdateRemoteDependenciesTask).dependsOn("verifyMasterBranch")
         project.task("updateDependenciesDev", type: UpdateRemoteDependenciesTask)
+        project.task("fatWar", type: FatWarTask)
+        project.task("minifyJs", type: FimsMinifyJsTask, overwrite: true)
+        project.task("jsExternalLibs", type: MinifyExternalJsTask)
+        project.task("jsApp", type: MinifyAppJsTask)
+        project.task("restartRemoteJetty", type: RestartRemoteJettyTask)
+        project.task("deployFims", type: FimsDeployTask)
+        project.task("deployFimsDev", type: FimsDevDeployTask)
+        project.task("deployFimsLocal", type: FimsDeployLocalTask)
     }
 
     void configureDependencies(final Project project) {
+        project.plugins.apply("war")
         project.plugins.apply("org.hidetake.ssh")
-        project.plugins.apply("org.biocode.fims")
+        project.plugins.apply("com.eriwen.gradle.js")
+        project.plugins.apply("org.biocode.fims-app")
 
-        project.sourceSets.create("doclet")
 
         project.configurations {
             additionalSources
@@ -39,6 +57,34 @@ class FimsWebAppPlugin implements Plugin<Project> {
             doclet group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
             doclet group: 'io.swagger', name: 'swagger-models', version: '1.5.12'
         }
+    }
+
+    void configureDefaults(final Project project) {
+        project.sourceSets {
+            doclet {
+                java {
+                    srcDir 'src/main/java'
+                    srcDir "${project.buildDir}/additional-sources/org/springframework/data/domain"
+                    exclude 'biocode/fims/rest/FimsDefaultServlet.java'
+                    exclude "jaxb/**"
+                }
+            }
+        }
+
+        project.war {
+            webInf {
+                from "${project.buildDir}/js"
+                into "/js/"
+            }
+        }
+
+        project.webAppDirName = "src/main/web"
+        project.libsDirName = "../dist"
+
+        project.clean {
+            delete project.libsDir
+        }
+
     }
 
     void addProdJsLibTask(project) {

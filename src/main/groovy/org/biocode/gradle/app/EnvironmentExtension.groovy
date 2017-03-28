@@ -1,4 +1,4 @@
-package org.biocode.gradle.fims
+package org.biocode.gradle.app
 
 import org.gradle.api.tasks.Input
 

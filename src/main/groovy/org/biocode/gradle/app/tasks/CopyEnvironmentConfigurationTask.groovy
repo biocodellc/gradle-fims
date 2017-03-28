@@ -1,4 +1,4 @@
-package org.biocode.gradle.fims.tasks
+package org.biocode.gradle.app.tasks
 
 import groovy.io.FileType
 import org.gradle.api.DefaultTask
@@ -12,7 +12,7 @@ class CopyEnvironmentConfigurationTask extends DefaultTask {
     String description = "Generate Swagger rest documentation json file"
 
     CopyEnvironmentConfigurationTask() {
-        this.dependsOn "selectEnvironment"
+        dependsOn "selectEnvironment"
         project.tasks.getByName("processResources").dependsOn this
     }
 
