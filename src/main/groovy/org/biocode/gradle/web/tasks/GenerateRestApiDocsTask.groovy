@@ -1,9 +1,9 @@
-package org.biocode.gradle.tasks
+package org.biocode.gradle.web.tasks
 
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
-import org.biocode.gradle.SwaggerConfig
-import org.biocode.gradle.SwaggerJavadocOptions
+import org.biocode.gradle.web.SwaggerConfig
+import org.biocode.gradle.web.SwaggerJavadocOptions
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
@@ -12,24 +12,28 @@ import org.gradle.api.tasks.javadoc.Javadoc
 /**
  * @author rjewing
  */
-class GenerateRestApiDocs extends Javadoc {
+class GenerateRestApiDocsTask extends Javadoc {
+    String group = "Fims"
+    String description = "Generate Swagger rest documentation json file"
+
     private File destinationDir = project.file("${project.docsDir}/rest-api-docs")
 
     @Nested SwaggerConfig swagger = new SwaggerConfig()
 
     private SwaggerJavadocOptions options = new SwaggerJavadocOptions(project, swagger)
 
-    GenerateRestApiDocs() {
+    GenerateRestApiDocsTask() {
         project.afterEvaluate {
             if (this.source.isEmpty()) {
                 this.setSource(project.sourceSets.doclet.allJava)
             }
-            if (!swagger.apiVersions) {
-                throw new InvalidUserDataException("The property swagger.apiVersions must specify at least 1 version")
-            }
         }
 
         doFirst {
+            if (!swagger.apiVersions) {
+                throw new InvalidUserDataException("The property swagger.apiVersions must specify at least 1 version")
+            }
+
             def files = []
             project.configurations.additionalSources.files.each {
                 files.add( project.zipTree(it) )
@@ -48,7 +52,7 @@ class GenerateRestApiDocs extends Javadoc {
         super.setOptions(this.options)
         super.generate()
 
-        def swaggerFile = project.reporting.file("rest-api-docs/service.json")
+        def swaggerFile = project.file("${destinationDir}/service.json")
         // add the apiVersions to the swagger file
         def swagger = new JsonSlurper().parseText(swaggerFile.text)
         swagger.info.apiVersions = this.swagger.apiVersions

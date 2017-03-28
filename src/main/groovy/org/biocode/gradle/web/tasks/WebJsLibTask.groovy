@@ -1,4 +1,4 @@
-package org.biocode.gradle.tasks
+package org.biocode.gradle.web.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*

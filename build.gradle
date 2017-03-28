@@ -16,14 +16,19 @@ dependencies {
     compile localGroovy()
     compile gradleApi()
 
-//    compile 'org.ajoberstar:gradle-git:1.6.0'
+    compile 'org.ajoberstar:gradle-git:1.6.0'
+    compile "org.hidetake:gradle-ssh-plugin:2.8.0"
 }
 
 gradlePlugin {
     plugins {
         FimsPlugin {
             id = "org.biocode.fims"
-            implementationClass = "org.biocode.gradle.FimsPlugin"
+            implementationClass = "org.biocode.gradle.fims.FimsPlugin"
+        }
+        FimsWebAppPlugin {
+            id = "org.biocode.fims-web"
+            implementationClass = "org.biocode.gradle.web.FimsWebAppPlugin"
         }
     }
 }

@@ -1,30 +1,36 @@
-package org.biocode.gradle
+package org.biocode.gradle.web
 
-import org.biocode.gradle.tasks.GenerateRestApiDocs
-import org.biocode.gradle.tasks.WebJsLibTask
+import org.biocode.gradle.web.tasks.GenerateRestApiDocsTask
+import org.biocode.gradle.web.tasks.UpdateRemoteDependenciesTask
+import org.biocode.gradle.web.tasks.WebJsLibTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
  * @author rjewing
  */
-class FimsPlugin implements Plugin<Project> {
+class FimsWebAppPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-
         configureDependencies(project)
 
         addProdJsLibTask(project)
         addDevJsLibTask(project)
 
-        project.task('generateRestApiDocs', type: GenerateRestApiDocs, group: 'Fims')
+        project.task("generateRestApiDocs", type: GenerateRestApiDocsTask)
+        project.task("updateDependencies", type: UpdateRemoteDependenciesTask).dependsOn("verifyMasterBranch")
+        project.task("updateDependenciesDev", type: UpdateRemoteDependenciesTask)
     }
 
     void configureDependencies(final Project project) {
+        project.plugins.apply("org.hidetake.ssh")
+        project.plugins.apply("org.biocode.fims")
+
+        project.sourceSets.create("doclet")
+
         project.configurations {
             additionalSources
-            server
             doclet.extendsFrom server
         }
 

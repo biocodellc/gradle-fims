@@ -1,4 +1,4 @@
-package org.biocode.gradle
+package org.biocode.gradle.web
 
 import org.gradle.api.Project
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
