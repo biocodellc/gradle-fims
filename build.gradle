@@ -1,8 +1,24 @@
-plugins {
-    id "java-gradle-plugin"
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.biocode:gradle-fims:0.1.1-dev.1.uncommitted+9b5648a"
+    }
 }
 
-apply plugin: 'groovy'
+plugins {
+    id "groovy"
+    id "java-gradle-plugin"
+    id 'maven-publish'
+}
+
+apply plugin: "org.biocode.fims"
 
 repositories {
     mavenCentral()
@@ -12,14 +28,11 @@ repositories {
     }
 }
 
-group = 'org.biocode'
-version = '1.0-SNAPSHOT'
-
 dependencies {
     compile localGroovy()
     compile gradleApi()
 
-    compile "org.ajoberstar:gradle-git:1.6.0"
+    compile "org.ajoberstar:gradle-git:1.7.0"
     compile "org.hidetake:gradle-ssh-plugin:2.8.0"
     compile "com.eriwen:gradle-js-plugin:2.14.1"
 }

@@ -1,5 +1,6 @@
 package org.biocode.gradle.fims
 
+import org.ajoberstar.grgit.Grgit
 import org.biocode.gradle.fims.tasks.IntegrationTestJarTask
 import org.biocode.gradle.fims.tasks.IntegrationTestTask
 import org.biocode.gradle.fims.tasks.VerifyMasterBranch
@@ -16,6 +17,7 @@ class FimsPlugin implements Plugin<Project> {
     void apply(Project project) {
         configureDefaults(project)
         configureTests(project)
+        configureRelease(project)
 
         project.task("verifyMasterBranch", type: VerifyMasterBranch)
     }
@@ -86,5 +88,19 @@ class FimsPlugin implements Plugin<Project> {
             integrationTestOutput jarIntegrationTest
         }
     }
+
+    def configureRelease(Project project) {
+        project.plugins.apply("maven-publish")
+        project.plugins.apply("org.ajoberstar.release-opinion")
+
+        project.group = "org.biocode"
+
+        project.release {
+            grgit = Grgit.open(currentDir: project.file('.'))
+        }
+
+        project.tasks.release.dependsOn "build", "publish"
+    }
+
 
 }
