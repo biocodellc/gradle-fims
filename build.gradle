@@ -1,5 +1,5 @@
 plugins {
-	id "java-gradle-plugin"
+    id "java-gradle-plugin"
 }
 
 apply plugin: 'groovy'
@@ -20,10 +20,10 @@ dependencies {
 }
 
 gradlePlugin {
-	plugins {
-		FimsPlugin {
-			id = "org.biocode.fims"
-			implementationClass = "org.biocode.gradle.FimsPlugin"
-		}
-	}
+    plugins {
+        FimsPlugin {
+            id = "org.biocode.fims"
+            implementationClass = "org.biocode.gradle.FimsPlugin"
+        }
+    }
 }
