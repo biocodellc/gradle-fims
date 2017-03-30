@@ -15,7 +15,10 @@ class SwaggerJavadocOptions extends StandardJavadocDocletOptions {
         this.addStringOption("host", "")
         this.addBooleanOption("skipUiFiles", true)
 
-        project.afterEvaluate {
+        project.gradle.projectsEvaluated {
+            // fo some reason, we can't detect if classpath or docletpath have been set in the build.gradle file
+            // if we need to set these in the build.gradle, we need to move this to GenerateRestApiDocsTask
+            // where we can detect if they have been overridden in build.gradle
             this.setClasspath(project.configurations.doclet.files.asType(List))
             this.setDocletpath(project.configurations.doclet.files.asType(List))
 

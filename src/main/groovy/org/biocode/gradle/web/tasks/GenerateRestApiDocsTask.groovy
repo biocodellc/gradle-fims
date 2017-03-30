@@ -2,6 +2,7 @@ package org.biocode.gradle.web.tasks
 
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import org.biocode.gradle.app.ForceJarsResolver
 import org.biocode.gradle.web.SwaggerConfig
 import org.biocode.gradle.web.SwaggerJavadocOptions
 import org.gradle.api.InvalidUserDataException
@@ -24,6 +25,10 @@ class GenerateRestApiDocsTask extends Javadoc {
 
     GenerateRestApiDocsTask() {
         project.afterEvaluate {
+            ForceJarsResolver.forceJars(project, this.name)
+        }
+
+        project.gradle.projectsEvaluated {
             if (this.source.isEmpty()) {
                 this.setSource(project.sourceSets.doclet.allJava)
             }
