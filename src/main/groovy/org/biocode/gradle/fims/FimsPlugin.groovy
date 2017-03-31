@@ -7,6 +7,7 @@ import org.biocode.gradle.fims.tasks.IntegrationTestTask
 import org.biocode.gradle.fims.tasks.VerifyMasterBranch
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.credentials.Credentials
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.testing.Test
@@ -95,6 +96,16 @@ class FimsPlugin implements Plugin<Project> {
         project.artifacts {
             integrationTestOutput jarIntegrationTest
         }
+
+        project.repositories {
+            maven {
+                url "http://www.repo.biocodellc.com/repository/maven-private/"
+                credentials {
+                    username mavenUser
+                    password mavenPass
+                }
+            }
+        }
     }
 
     def configureRelease(Project project) {
@@ -104,6 +115,18 @@ class FimsPlugin implements Plugin<Project> {
         if (!project.group) {
             log.debug "Setting group from: '${project.group}' to: '${DEFAULT_GROUP}'."
             project.group = DEFAULT_GROUP
+        }
+
+        publishing {
+            repositories {
+                maven {
+                    url "http://www.repo.biocodellc.com/repository/maven-${project.version.toString().contains('dev') ? 'dev-releases' : 'releases'}"
+                    Credentials {
+                        username mavenUser
+                        password mavenPass
+                    }
+                }
+            }
         }
 
         project.release {

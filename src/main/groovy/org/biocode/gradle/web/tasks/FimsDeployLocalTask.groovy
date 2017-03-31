@@ -11,10 +11,12 @@ class FimsDeployLocalTask extends DefaultTask {
     @Input String deployDir
 
     FimsDeployLocalTask() {
-        project.ext.environment = "local"
-
         dependsOn "fatWar"
         dependsOn "copyEnvironmentFiles"
+
+        if (this.name in project.gradle.startParameter.taskNames) {
+            project.ext.environment = "local"
+        }
     }
 
     @TaskAction

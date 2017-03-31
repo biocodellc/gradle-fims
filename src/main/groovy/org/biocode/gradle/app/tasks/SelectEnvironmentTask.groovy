@@ -1,6 +1,7 @@
 package org.biocode.gradle.app.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.execution.commandline.TaskConfigurationException
 
@@ -8,7 +9,7 @@ import org.gradle.execution.commandline.TaskConfigurationException
  * @author rjewing
  */
 class SelectEnvironmentTask extends DefaultTask {
-    String description = "Internal task used to set the environment"
+    @Internal String description = "Internal task used to set the environment"
 
     @TaskAction
     def selectEnvironment() {
@@ -22,6 +23,6 @@ class SelectEnvironmentTask extends DefaultTask {
                     "the directory ${project.environments.environmentDir}/${project.environment} doesn't exist")
         }
 
-        logger.info("Environment is set to ${project.environment}")
+        logger.quiet("Environment is set to ${project.environment}")
     }
 }

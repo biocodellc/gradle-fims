@@ -7,8 +7,8 @@ import org.gradle.api.tasks.*
  * @author rjewing
  */
 class WebJsLibTask extends DefaultTask {
-    final def tag = "<!-- LIBRARY LOADING -->"
-    final def endTag = "<!-- END: LIBRARY LOADING -->"
+    private final def tag = "<!-- LIBRARY LOADING -->"
+    private final def endTag = "<!-- END: LIBRARY LOADING -->"
 
     @InputFile
     File html
@@ -36,7 +36,7 @@ class WebJsLibTask extends DefaultTask {
         }
     }
 
-    String getHtmlReplacement(String environment) {
+    private String getHtmlReplacement(String environment) {
         switch (environment) {
             case 'dev':
                 return getDevHtml()
@@ -45,7 +45,7 @@ class WebJsLibTask extends DefaultTask {
         }
     }
 
-    String getDevHtml() {
+    private String getDevHtml() {
         String html = "\n"
 
         project.jsExternalLibs.source.files.each { file ->

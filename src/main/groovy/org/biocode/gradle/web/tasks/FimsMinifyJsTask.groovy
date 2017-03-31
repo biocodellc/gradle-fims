@@ -3,14 +3,15 @@ package org.biocode.gradle.web.tasks
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 /**
  * @author rjewing
  */
 class FimsMinifyJsTask extends DefaultTask {
-    String group = "Fims"
-    String description = "Minifies and aggregates all js files"
+    @Internal String group = "Fims"
+    @Internal String description = "Minifies and aggregates all js files"
 
     FimsMinifyJsTask() {
         dependsOn "addProdJsLibs"

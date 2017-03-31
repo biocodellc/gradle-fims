@@ -7,7 +7,10 @@ class FimsDevDeployTask extends RemoteDeployTask {
     FimsDevDeployTask() {
         super()
 
-        workingDir = "/tmp/${project.name}-dev"
-        project.ext.environment = "development"
+        workingDir = "/tmp/${project.name}-dev/"
+
+        if (this.name in project.gradle.startParameter.taskNames) {
+            project.ext.environment = "development"
+        }
     }
 }

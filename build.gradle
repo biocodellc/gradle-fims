@@ -43,6 +43,18 @@ gradlePlugin {
 
 group = "org.biocode"
 
+publishing {
+    repositories {
+        maven {
+            url "http://www.repo.biocodellc.com/repository/maven-${project.version.toString().contains('dev') ? 'dev-releases' : 'releases'}"
+            credentials {
+                username mavenUser
+                password mavenPass
+            }
+        }
+    }
+}
+
 release {
     grgit = Grgit.open(currentDir: project.file('.'))
 }

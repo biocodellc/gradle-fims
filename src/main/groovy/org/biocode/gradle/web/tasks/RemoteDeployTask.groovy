@@ -2,13 +2,14 @@ package org.biocode.gradle.web.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 /**
  * @author rjewing
  */
 abstract class RemoteDeployTask extends DefaultTask {
-    String group = "Fims"
+    @Internal String group = "Fims"
 
     @Input String workingDir
     @Input String remoteLibsDir
@@ -23,7 +24,7 @@ abstract class RemoteDeployTask extends DefaultTask {
     @TaskAction
     def deploy() {
         project.ssh.run {
-            project.session(remote) {
+            session(remote) {
                 // Cleanup to begin
                 execute "/bin/rm -rf " + workingDir
                 execute "/bin/mkdir " + workingDir

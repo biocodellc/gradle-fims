@@ -1,5 +1,6 @@
 package org.biocode.gradle.web
 
+import org.biocode.gradle.app.ForceJarsResolver
 import org.biocode.gradle.web.tasks.FatWarTask
 import org.biocode.gradle.web.tasks.FimsDeployLocalTask
 import org.biocode.gradle.web.tasks.FimsDeployTask
@@ -13,6 +14,7 @@ import org.biocode.gradle.web.tasks.UpdateRemoteDependenciesTask
 import org.biocode.gradle.web.tasks.WebJsLibTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 
 /**
  * @author rjewing
@@ -26,9 +28,9 @@ class FimsWebAppPlugin implements Plugin<Project> {
 
         addProdJsLibTask(project)
         addDevJsLibTask(project)
+        addUpdateDependenciesTask(project)
 
         project.task("generateRestApiDocs", type: GenerateRestApiDocsTask)
-        project.task("updateDependencies", type: UpdateRemoteDependenciesTask).dependsOn("verifyMasterBranch")
         project.task("updateDependenciesDev", type: UpdateRemoteDependenciesTask)
         project.task("fatWar", type: FatWarTask)
         project.task("minifyJs", type: FimsMinifyJsTask, overwrite: true)
@@ -88,9 +90,13 @@ class FimsWebAppPlugin implements Plugin<Project> {
     }
 
     void addProdJsLibTask(project) {
-        project.task('addProdJsLibs', type: WebJsLibTask, group: 'Fims', description: 'Modify index.html to include the combined, minified, and compressed js files') {
+        Task t = project.task('addProdJsLibs', type: WebJsLibTask, group: 'Fims', description: 'Modify index.html to include the combined, minified, and compressed js files') {
             html = project.file('src/main/web/index.html')
             environment = 'production'
+        }
+
+        t.project.afterEvaluate {
+            ForceJarsResolver.forceJars(project, t.name)
         }
     }
 
@@ -98,6 +104,15 @@ class FimsWebAppPlugin implements Plugin<Project> {
         project.task('addDevJsLibs', type: WebJsLibTask, group: 'Fims', description: 'Modify index.html to include all js files') {
             html = project.file('src/main/web/index.html')
             environment = 'dev'
+        }
+    }
+
+
+    private void addUpdateDependenciesTask(Project project) {
+        Task upDeps = project.task("updateDependencies", type: UpdateRemoteDependenciesTask)
+        upDeps.dependsOn("verifyMasterBranch")
+        project.afterEvaluate {
+            ForceJarsResolver.forceJars(project, upDeps.name)
         }
     }
 

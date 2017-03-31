@@ -6,6 +6,7 @@ import org.biocode.gradle.app.ForceJarsResolver
 import org.biocode.gradle.web.SwaggerConfig
 import org.biocode.gradle.web.SwaggerJavadocOptions
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -14,8 +15,8 @@ import org.gradle.api.tasks.javadoc.Javadoc
  * @author rjewing
  */
 class GenerateRestApiDocsTask extends Javadoc {
-    String group = "Fims"
-    String description = "Generate Swagger rest documentation json file"
+    @Internal String group = "Fims"
+    @Internal String description = "Generate Swagger rest documentation json file"
 
     private File destinationDir = project.file("${project.docsDir}/rest-api-docs")
 
