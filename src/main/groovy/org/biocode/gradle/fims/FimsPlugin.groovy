@@ -21,6 +21,7 @@ class FimsPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
+        project.extensions.create("fims", FimsExtension)
         CompositeExtension compositeExtension = project.extensions.create("composite", CompositeExtension)
         compositeExtension.setProject(project)
 
@@ -101,8 +102,8 @@ class FimsPlugin implements Plugin<Project> {
             maven {
                 url "http://www.repo.biocodellc.com/repository/maven-private/"
                 credentials {
-                    username mavenUser
-                    password mavenPass
+                    username project.fims.mavenUser
+                    password project.fims.mavenPass
                 }
             }
         }
@@ -117,13 +118,13 @@ class FimsPlugin implements Plugin<Project> {
             project.group = DEFAULT_GROUP
         }
 
-        publishing {
+        project.publishing {
             repositories {
                 maven {
                     url "http://www.repo.biocodellc.com/repository/maven-${project.version.toString().contains('dev') ? 'dev-releases' : 'releases'}"
-                    Credentials {
-                        username mavenUser
-                        password mavenPass
+                    credentials {
+                        username project.fims.mavenUser
+                        password project.fims.mavenPass
                     }
                 }
             }
