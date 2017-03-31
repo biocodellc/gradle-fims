@@ -99,6 +99,7 @@ class FimsPlugin implements Plugin<Project> {
         }
 
         project.repositories {
+            mavenCentral()
             maven {
                 url "http://www.repo.biocodellc.com/repository/maven-private/"
                 credentials {
