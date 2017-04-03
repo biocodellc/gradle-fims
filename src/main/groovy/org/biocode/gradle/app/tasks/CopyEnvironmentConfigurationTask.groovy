@@ -22,11 +22,13 @@ class CopyEnvironmentConfigurationTask extends DefaultTask {
     @TaskAction
     def copyFiles() {
         cleanResourceDirectory()
-        project.copy {
-            from "${project.environments.environmentDir}/${project.environment}"
-            into "${project.webAppDirName}/WEB-INF"
-            include "web.xml"
-        }
+		if (project.hasProperty("webAppDirName")) {
+			project.copy {
+				from "${project.environments.environmentDir}/${project.environment}"
+				into "${project.webAppDirName}/WEB-INF"
+				include "web.xml"
+			}
+		}
 
         project.copy {
             from "${project.environments.environmentDir}/${project.environment}"
