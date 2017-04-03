@@ -10,7 +10,7 @@ class CompositeExtension {
     private Project project
     boolean resolvedProject = false
 
-    public void setProject(Project project) {
+    CompositeExtension(Project project) {
         this.project = project
     }
 

@@ -7,9 +7,18 @@ import org.biocode.gradle.fims.tasks.IntegrationTestTask
 import org.biocode.gradle.fims.tasks.VerifyMasterBranch
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.api.publish.maven.tasks.GenerateMavenPom
+import org.gradle.api.publish.plugins.PublishingPlugin
 import org.gradle.api.tasks.testing.Test
+import org.gradle.model.Finalize
+import org.gradle.model.ModelMap
+import org.gradle.model.RuleSource
 
 /**
  * @author rjewing
@@ -20,8 +29,8 @@ class FimsPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        CompositeExtension compositeExtension = project.extensions.create("composite", CompositeExtension)
-        compositeExtension.setProject(project)
+        project.extensions.create("fims", FimsExtension, project)
+        project.extensions.create("composite", CompositeExtension, project)
 
         configureDefaults(project)
         configureTests(project)
@@ -61,6 +70,7 @@ class FimsPlugin implements Plugin<Project> {
                 scopes.COMPILE.plus += [project.configurations.server]
             }
         }
+
     }
 
     def configureTests(Project project) {
@@ -99,17 +109,87 @@ class FimsPlugin implements Plugin<Project> {
 
     def configureRelease(Project project) {
         project.plugins.apply("maven-publish")
-        project.plugins.apply("org.ajoberstar.release-opinion")
 
-        if (!project.group) {
-            log.debug "Setting group from: '${project.group}' to: '${DEFAULT_GROUP}'."
-            project.group = DEFAULT_GROUP
+        if (project.rootProject == project) {
+            project.plugins.apply("org.ajoberstar.release-opinion")
+
+            if (!project.group) {
+                log.debug "Setting group from: '${project.group}' to: '${DEFAULT_GROUP}'."
+                project.group = DEFAULT_GROUP
+            }
+
+            project.publishing {
+                repositories {
+                    add(project.fims.mavenPublish())
+                }
+                publications {
+                    java(MavenPublication) {
+                        from project.components.java
+                        pom.withXml {
+                            def dependenciesNode = asNode().dependencies[0] ?: asNode().appendNode("dependencies")
+
+                            // gradle puts all dependencies as runtime. we need to replace the scope with compile if
+                            // the dependency is in the compile configuration
+                            dependenciesNode.findAll() {
+                                it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
+                                    dep.name == it.artifactId.text()
+                                }
+                            }.each { it.scope*.value = 'compile'}
+
+                            // add all server configuration deps to the compile scope
+                            project.configurations.server.allDependencies.each {
+                                def dependencyNode = dependenciesNode.appendNode('dependency')
+                                dependencyNode.appendNode('groupId', it.group)
+                                dependencyNode.appendNode('artifactId', it.name)
+                                dependencyNode.appendNode('version', it.version)
+                                dependencyNode.appendNode('scope', "compile")
+                            }
+
+                            // add all provided configuration deps to the provided scope
+                            project.configurations.provided.allDependencies.each {
+                                def dependencyNode = dependenciesNode.appendNode('dependency')
+                                dependencyNode.appendNode('groupId', it.group)
+                                dependencyNode.appendNode('artifactId', it.name)
+                                dependencyNode.appendNode('version', it.version)
+                                dependencyNode.appendNode('scope', "provided")
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            project.release {
+                grgit = Grgit.open(currentDir: project.file('.'))
+
+                versionStrategy RebuildVersionStrategyFix.INSTANCE
+            }
+            // since release plugin is only applied to the root project, we only want to build the root project
+            project.tasks.release.dependsOn ":build", "publish"
+        } else {
+            log.quiet("Skipping default fims release configuration for non rootProject: ${project.name}")
+        }
+    }
+
+    static class Rules extends RuleSource {
+        @Finalize
+        public void removeChildProjectPublishingTasks(ModelMap<Task> tasks) {
+            removeChildProjectTask(tasks.get(PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME))
+            removeChildProjectTask(tasks.get(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME))
+            for (Task t : tasks) {
+                switch (t.class) {
+                    case AbstractPublishToMaven.class:
+                    case GenerateMavenPom.class:
+                        removeChildProjectTask(t)
+                }
+            }
         }
 
-        project.release {
-            grgit = Grgit.open(currentDir: project.file('.'))
+        private void removeChildProjectTask(Task t) {
+            if (t.project != t.project.rootProject) {
+                log.info("Removing childProject task [${t.name}]. To run this task, change to the project's directory: ${t.project.projectDir}")
+                t.project.tasks.remove(t)
+            }
         }
-
-        project.tasks.release.dependsOn "build", "publish"
     }
 }
