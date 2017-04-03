@@ -32,7 +32,6 @@ class RebuildVersionStrategyFix implements VersionStrategy {
         def clean = grgit.status().clean
         def props = project.hasProperty(SemVerStrategy.SCOPE_PROP) || project.hasProperty(SemVerStrategy.STAGE_PROP)
         def headVersion = getHeadVersion(project, grgit)
-        println project.hasProperty("release")
 
         if (clean && !props && headVersion) {
             logger.info('Using {} strategy because repo is clean, no "release." properties found and head version is {}', name, headVersion)

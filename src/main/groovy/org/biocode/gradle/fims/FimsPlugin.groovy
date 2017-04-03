@@ -64,6 +64,10 @@ class FimsPlugin implements Plugin<Project> {
             }
         }
 
+        project.jar {
+            archiveName "${project.name}.jar"
+        }
+
         project.idea {
             module {
                 scopes.PROVIDED.plus += [project.configurations.provided]

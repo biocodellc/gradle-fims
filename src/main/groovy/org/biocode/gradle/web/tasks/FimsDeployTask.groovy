@@ -10,10 +10,7 @@ class FimsDeployTask extends RemoteDeployTask {
         super()
 
         workingDir = "/tmp/${project.name}-prod/"
-
-        if (this.name in project.gradle.startParameter.taskNames) {
-            project.ext.environment = "production"
-        }
+        setEnvironment("production")
 
         dependsOn "verifyMasterBranch"
 

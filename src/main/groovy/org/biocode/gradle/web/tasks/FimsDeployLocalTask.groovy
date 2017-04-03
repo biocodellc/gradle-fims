@@ -1,5 +1,6 @@
 package org.biocode.gradle.web.tasks
 
+import org.biocode.gradle.app.tasks.SelectEnvironmentTask
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -14,9 +15,7 @@ class FimsDeployLocalTask extends DefaultTask {
         dependsOn "fatWar"
         dependsOn "copyEnvironmentFiles"
 
-        if (this.name in project.gradle.startParameter.taskNames) {
-            project.ext.environment = "local"
-        }
+        SelectEnvironmentTask.setEnvironment(project, this, "local")
     }
 
     @TaskAction

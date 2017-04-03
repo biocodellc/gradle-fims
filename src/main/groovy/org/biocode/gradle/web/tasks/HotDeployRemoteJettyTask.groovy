@@ -8,17 +8,18 @@ import org.gradle.api.tasks.TaskAction
 /**
  * @author rjewing
  */
-class RestartRemoteJettyTask extends DefaultTask {
+class HotDeployRemoteJettyTask extends DefaultTask {
     @Internal String description = "Restart jetty instance"
 
+    @Input String remoteWarDir
     @Input def remote
-    @Input String jettyPath
 
     @TaskAction
     def restart() {
         project.ssh.run {
             session(remote) {
-                executeSudo jettyPath + ' restart', pty: true
+                def xml = project.war.archiveName.take(project.war.archiveName.lastIndexOf('.')) + ".xml"
+                executeSudo "touch ${remoteWarDir}${xml}", pty: true
             }
         }
     }

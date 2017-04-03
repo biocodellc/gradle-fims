@@ -36,7 +36,6 @@ class FimsWebAppPlugin implements Plugin<Project> {
         project.task("minifyJs", type: FimsMinifyJsTask, overwrite: true)
         project.task("jsExternalLibs", type: MinifyExternalJsTask)
         project.task("jsApp", type: MinifyAppJsTask)
-        project.task("restartRemoteJetty", type: RestartRemoteJettyTask)
         project.task("deployFims", type: FimsDeployTask)
         project.task("deployFimsDev", type: FimsDevDeployTask)
         project.task("deployFimsLocal", type: FimsDeployLocalTask)
@@ -74,6 +73,7 @@ class FimsWebAppPlugin implements Plugin<Project> {
         }
 
         project.war {
+            archiveName "${project.name}.war"
             webInf {
                 from "${project.buildDir}/js"
                 into "/js/"
