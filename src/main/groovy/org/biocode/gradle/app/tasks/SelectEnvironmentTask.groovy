@@ -20,11 +20,6 @@ class SelectEnvironmentTask extends DefaultTask {
             project.ext.environment = project.environments.defaultEnv
         }
 
-        if (!project.file("${project.environments.environmentDir}/${project.environment}").exists()) {
-            throw new TaskConfigurationException(this.path, "Environment was set to ${project.environment} however " +
-                    "the directory ${project.environments.environmentDir}/${project.environment} doesn't exist", null)
-        }
-
         logger.quiet("Environment is set to ${project.environment}")
     }
 

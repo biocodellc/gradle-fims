@@ -19,7 +19,9 @@ class DependencyResolver {
         def forceJars = project.hasProperty("forceJars")
         log.info("resolveDependency forceJars: ${forceJars}, dependencyNotation: ${dependencyNotation}, projectPath: ${projectPath}")
 
-        def dependency = project.dependencies.create(dependencyNotation)
+        def dependency = project.dependencies.create(dependencyNotation) {
+            transitive = false
+        }
 
     if (!forceJars && projectPath) {
 
