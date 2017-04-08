@@ -12,6 +12,7 @@ class FimsDeployLocalTask extends DefaultTask {
     @Input String deployDir
 
     FimsDeployLocalTask() {
+        dependsOn "cleanWar"
         dependsOn "fatWar"
         dependsOn "copyEnvironmentFiles"
 

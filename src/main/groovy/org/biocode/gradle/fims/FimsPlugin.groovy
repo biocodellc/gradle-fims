@@ -55,6 +55,7 @@ class FimsPlugin implements Plugin<Project> {
         project.configurations {
             provided
             server
+            serverRuntime
         }
 
         project.sourceSets {

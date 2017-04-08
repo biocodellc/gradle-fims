@@ -21,6 +21,7 @@ class UpdateRemoteDependenciesTask extends DefaultTask {
             session(remote) {
                 execute "/bin/rm -f " + location + "*"
                 put from: project.configurations.server.incoming.getFiles(), into: location
+                put from: project.configurations.serverRuntime.incoming.getFiles(), into: location
             }
         }
     }

@@ -18,6 +18,7 @@ abstract class RemoteDeployTask extends DefaultTask {
     @Input def remote
 
     RemoteDeployTask() {
+        dependsOn "cleanWar"
         dependsOn "war"
         dependsOn "copyEnvironmentFiles"
     }
