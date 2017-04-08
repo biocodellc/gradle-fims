@@ -7,6 +7,7 @@ import com.eriwen.gradle.js.tasks.MinifyJsTask
  */
 class MinifyAppJsTask extends MinifyJsTask {
     MinifyAppJsTask() {
+        dependsOn "populateJsProps"
         dest = "${project.buildDir}/js/all.min.js"
         sourceMap = project.file("${project.buildDir}/js/all.min.map")
     }

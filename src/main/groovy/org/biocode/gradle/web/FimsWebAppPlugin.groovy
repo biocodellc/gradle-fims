@@ -10,6 +10,7 @@ import org.biocode.gradle.web.tasks.GenerateRestApiDocsTask
 import org.biocode.gradle.web.tasks.MinifyAppJsTask
 import org.biocode.gradle.web.tasks.MinifyExternalJsTask
 import org.biocode.gradle.web.tasks.RestartRemoteJettyTask
+import org.biocode.gradle.web.tasks.SetupAppConstantsTask
 import org.biocode.gradle.web.tasks.UpdateRemoteDependenciesTask
 import org.biocode.gradle.web.tasks.WebJsLibTask
 import org.gradle.api.Plugin
@@ -36,6 +37,7 @@ class FimsWebAppPlugin implements Plugin<Project> {
         project.task("minifyJs", type: FimsMinifyJsTask, overwrite: true)
         project.task("jsExternalLibs", type: MinifyExternalJsTask)
         project.task("jsApp", type: MinifyAppJsTask)
+        project.task("populateJsProps", type: SetupAppConstantsTask)
         project.task("deployFims", type: FimsDeployTask)
         project.task("deployFimsDev", type: FimsDevDeployTask)
         project.task("deployFimsLocal", type: FimsDeployLocalTask)

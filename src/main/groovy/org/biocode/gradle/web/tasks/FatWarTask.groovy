@@ -15,7 +15,6 @@ class FatWarTask extends War {
         archiveName = project.name + "-fat.war"
 
         classpath project.configurations.server
-        classpath project.configurations.compile
 
         webInf {
             from "${project.buildDir}/js"
