@@ -21,21 +21,23 @@ class CopyEnvironmentConfigurationTask extends DefaultTask {
 
     @TaskAction
     def copyFiles() {
-        cleanResourceDirectory()
-		if (project.hasProperty("webAppDirName")) {
-			project.copy {
-				from "${project.environments.environmentDir}/${project.environment}"
-				into "${project.webAppDirName}/WEB-INF"
-				include "web.xml"
-			}
-		}
+        if (project.file("${project.environments.environmentDir}/${project.environment}").exists()) {
+            cleanResourceDirectory()
+            if (project.hasProperty("webAppDirName")) {
+                project.copy {
+                    from "${project.environments.environmentDir}/${project.environment}"
+                    into "${project.webAppDirName}/WEB-INF"
+                    include "web.xml"
+                }
+            }
 
-        project.copy {
-            from "${project.environments.environmentDir}/${project.environment}"
-            into "src/main/resources"
-            include "**/*"
-            exclude "web.xml"
-            exclude ".gitkeep"
+            project.copy {
+                from "${project.environments.environmentDir}/${project.environment}"
+                into "src/main/resources"
+                include "**/*"
+                exclude "web.xml"
+                exclude ".gitkeep"
+            }
         }
     }
 
