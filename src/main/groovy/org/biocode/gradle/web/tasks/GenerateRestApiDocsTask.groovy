@@ -4,7 +4,6 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import org.biocode.gradle.app.ForceJarsResolver
 import org.biocode.gradle.web.SwaggerConfig
-import org.biocode.gradle.web.SwaggerJavadocOptions
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -15,16 +14,30 @@ import org.gradle.api.tasks.javadoc.Javadoc
  * @author rjewing
  */
 class GenerateRestApiDocsTask extends Javadoc {
-    @Internal String group = "Fims"
-    @Internal String description = "Generate Swagger rest documentation json file"
+    @Internal
+    String group = "Fims"
+    @Internal
+    String description = "Generate Swagger rest documentation json file"
 
     private File destinationDir = project.file("${project.docsDir}/rest-api-docs")
 
-    @Nested SwaggerConfig swagger = new SwaggerConfig()
-
-    private SwaggerJavadocOptions options = new SwaggerJavadocOptions(project, swagger)
+    @Nested
+    SwaggerConfig swagger = new SwaggerConfig()
 
     GenerateRestApiDocsTask() {
+        options {
+            doclet "com.tenxerconsulting.swagger.doclet.ServiceDoclet"
+            addStringOption("host", "")
+            addBooleanOption("skipUiFiles", true)
+
+            if (swagger.apiVersions) {
+                addStringOption("apiVersion", swagger.apiVersions[-1])
+                addStringOption("apiBasePath", swagger.apiBasePath + swagger.apiVersions[-1])
+            }
+
+            addStringOption("apiInfoFile", swagger.apiInfo)
+        }
+
         project.afterEvaluate {
             ForceJarsResolver.forceJars(project, this.name)
         }
@@ -32,6 +45,14 @@ class GenerateRestApiDocsTask extends Javadoc {
         project.gradle.projectsEvaluated {
             if (this.source.isEmpty()) {
                 this.setSource(project.sourceSets.doclet.allJava)
+            }
+
+            if (!options.classpath) {
+                options.classpath project.configurations.doclet.files.asType(List)
+            }
+
+            if (!options.docletpath) {
+                options.docletpath = project.configurations.doclet.files.asType(List)
             }
         }
 
@@ -42,7 +63,7 @@ class GenerateRestApiDocsTask extends Javadoc {
 
             def files = []
             project.configurations.additionalSources.files.each {
-                files.add( project.zipTree(it) )
+                files.add(project.zipTree(it))
             }
             project.copy {
                 from files
@@ -55,7 +76,6 @@ class GenerateRestApiDocsTask extends Javadoc {
     @Override
     void generate() {
         super.setDestinationDir(destinationDir)
-        super.setOptions(this.options)
         super.generate()
 
         def swaggerFile = project.file("${destinationDir}/service.json")
