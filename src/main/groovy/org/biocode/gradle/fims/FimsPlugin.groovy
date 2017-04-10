@@ -62,6 +62,7 @@ class FimsPlugin implements Plugin<Project> {
             main {
                 compileClasspath += project.configurations.server
                 compileClasspath += project.configurations.provided
+                runtimeClasspath += project.configurations.serverRuntime
             }
         }
 
@@ -73,6 +74,7 @@ class FimsPlugin implements Plugin<Project> {
             module {
                 scopes.PROVIDED.plus += [project.configurations.provided]
                 scopes.COMPILE.plus += [project.configurations.server]
+                scopes.RUNTIME.plus += [project.configurations.serverRuntime]
             }
         }
 
