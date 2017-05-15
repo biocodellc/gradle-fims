@@ -15,19 +15,19 @@ class DependencyResolver {
     /**
      * Define a Method for resolving dependencies as projects if possible. Otherwise the passed in dependency notation
      */
-    static Dependency resolveDependency(Object dependencyNotation, Project project, String projectPath) {
+    static Dependency resolveDependency(Object dependencyNotation, Project project, String projectPath, String configuration) {
         def forceJars = project.hasProperty("forceJars")
         log.info("resolveDependency forceJars: ${forceJars}, dependencyNotation: ${dependencyNotation}, projectPath: ${projectPath}")
 
         def dependency = project.dependencies.create(dependencyNotation) {
-            transitive = false
+            configuration = configuration
         }
 
     if (!forceJars && projectPath) {
 
         Project childProject
         try {
-            childProject = project.project(":${projectPath}")
+            childProject = project.project("${projectPath}")
         } catch (UnknownProjectException e) {
             // No local project, use maven repository for dependency resolution. This is not an error condition but an expect
             childProject = null

@@ -20,7 +20,7 @@ class CompositeExtension {
      * @param dependencyNotation The map of the dependency in question, separated properly
      * @param projectPath The path of the project. Usually set in gradle.properties
      */
-    Dependency resolveDependency(Object dependencyNotation, String projectPath) {
-        return DependencyResolver.resolveDependency(dependencyNotation, project, projectPath)
+    Dependency resolveDependency(Object dependencyNotation, String projectPath, String configuration = "default") {
+        return DependencyResolver.resolveDependency(dependencyNotation, project, projectPath, configuration)
     }
 }
