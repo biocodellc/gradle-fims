@@ -27,13 +27,11 @@ class WebJsLibTask extends DefaultTask {
 
     @TaskAction
     void applyScriptAndStylesheetTags() {
-        if (html.exists()) {
-            def htmlReplacement = html.getText().replaceAll(
-                    "$tag\\p{all}*$endTag",
-                    "$tag${getHtmlReplacement(environment)}$endTag")
-            if (outputHtml == null) outputHtml = html
-            outputHtml.setText(htmlReplacement, 'UTF-8')
-        }
+        def htmlReplacement = html.getText().replaceAll(
+                "$tag\\p{all}*$endTag",
+                "$tag${getHtmlReplacement(environment)}$endTag")
+        if (outputHtml == null) outputHtml = html
+        outputHtml.setText(htmlReplacement, 'UTF-8')
     }
 
     private String getHtmlReplacement(String environment) {

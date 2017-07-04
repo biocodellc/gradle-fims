@@ -27,17 +27,20 @@ class FimsWebAppPlugin implements Plugin<Project> {
         configureDependencies(project)
         configureDefaults(project)
 
-        addProdJsLibTask(project)
-        addDevJsLibTask(project)
         addUpdateDependenciesTask(project)
+
+        if (project.file('src/main/web/js').exists()) {
+            addProdJsLibTask(project)
+            addDevJsLibTask(project)
+            project.task("jsExternalLibs", type: MinifyExternalJsTask)
+            project.task("jsApp", type: MinifyAppJsTask)
+            project.task("populateJsProps", type: SetupAppConstantsTask)
+            project.task("minifyJs", type: FimsMinifyJsTask, overwrite: true)
+        }
 
         project.task("generateRestApiDocs", type: GenerateRestApiDocsTask)
         project.task("updateDependenciesDev", type: UpdateRemoteDependenciesTask)
         project.task("fatWar", type: FatWarTask)
-        project.task("minifyJs", type: FimsMinifyJsTask, overwrite: true)
-        project.task("jsExternalLibs", type: MinifyExternalJsTask)
-        project.task("jsApp", type: MinifyAppJsTask)
-        project.task("populateJsProps", type: SetupAppConstantsTask)
         project.task("deployFims", type: FimsDeployTask)
         project.task("deployFimsDev", type: FimsDevDeployTask)
         project.task("deployFimsLocal", type: FimsDeployLocalTask)
@@ -46,8 +49,11 @@ class FimsWebAppPlugin implements Plugin<Project> {
     void configureDependencies(final Project project) {
         project.plugins.apply("war")
         project.plugins.apply("org.hidetake.ssh")
-        project.plugins.apply("com.eriwen.gradle.js")
         project.plugins.apply("org.biocode.fims-app")
+
+        if (project.file('src/main/web/js').exists()) {
+            project.plugins.apply("com.eriwen.gradle.js")
+        }
 
 
         project.configurations {
@@ -95,10 +101,6 @@ class FimsWebAppPlugin implements Plugin<Project> {
         Task t = project.task('addProdJsLibs', type: WebJsLibTask, group: 'Fims', description: 'Modify index.html to include the combined, minified, and compressed js files') {
             html = project.file('src/main/web/index.html')
             environment = 'production'
-        }
-
-        t.project.afterEvaluate {
-            ForceJarsResolver.forceJars(project, t.name)
         }
     }
 

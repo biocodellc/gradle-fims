@@ -11,7 +11,10 @@ class FatWarTask extends War {
     @Internal String description = "Creates a .war file with all required dependencies bundled"
 
     FatWarTask() {
-        dependsOn "minifyJs"
+        if (project.file('src/main/web/js').exists()) {
+            dependsOn "minifyJs"
+        }
+        
         archiveName = project.name + "-fat.war"
 
         classpath project.configurations.server
