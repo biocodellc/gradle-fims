@@ -34,6 +34,7 @@ abstract class RemoteDeployTask extends DefaultTask {
                 put from: project.war.archivePath.path, into: workingDir
                 // Extract libs and copy from server
                 execute "/usr/bin/unzip -d ${workingDir} ${workingDir}${project.war.archiveName}"
+                execute "/bin/mkdir -p ${workingDir}WEB-INF/lib/"
                 execute "/bin/cp ${remoteLibsDir}* ${workingDir}WEB-INF/lib/"
                 // Remove the old war file
                 execute "/bin/rm ${workingDir}${project.war.archiveName}"
