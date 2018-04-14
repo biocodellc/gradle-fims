@@ -1,10 +1,9 @@
-import org.ajoberstar.grgit.Grgit
-
 plugins {
     id "groovy"
     id "java-gradle-plugin"
     id "maven-publish"
-    id "org.ajoberstar.release-opinion" version "1.7.0"
+    id 'org.ajoberstar.grgit' version '2.1.1'
+    id 'org.ajoberstar.reckon' version '0.5.0'
 }
 
 repositories {
@@ -19,7 +18,8 @@ dependencies {
     compile localGroovy()
     compile gradleApi()
 
-    compile "org.ajoberstar:gradle-git:1.7.0"
+    compile "org.ajoberstar:grgit:2.1.1"
+    compile "org.ajoberstar.reckon:reckon-gradle:0.5.0"
     compile "org.hidetake:gradle-ssh-plugin:2.8.0"
     compile "com.eriwen:gradle-js-plugin:2.14.1"
 }
@@ -55,8 +55,15 @@ publishing {
     }
 }
 
-release {
-    grgit = Grgit.open(currentDir: project.file('.'))
+// ex. ./gradlew reckonTagCreate -Preckon.scope=minor -Preckon.stage=final
+reckon {
+    normal = scopeFromProp()
+    preRelease = stageFromProp('beta', 'rc', 'final')
 }
 
-tasks.release.dependsOn "build", "publish"
+task release() {
+    dependsOn build
+    dependsOn reckonTagCreate
+    dependsOn reckonTagPush
+    dependsOn publish
+}

@@ -1,9 +1,9 @@
 package org.biocode.gradle.fims
 
-import org.ajoberstar.grgit.Grgit
 import org.biocode.gradle.app.CompositeExtension
 import org.biocode.gradle.fims.tasks.IntegrationTestJarTask
 import org.biocode.gradle.fims.tasks.IntegrationTestTask
+import org.biocode.gradle.fims.tasks.Release
 import org.biocode.gradle.fims.tasks.VerifyMasterBranch
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -118,7 +118,8 @@ class FimsPlugin implements Plugin<Project> {
         project.plugins.apply("maven-publish")
 
         if (project.rootProject == project) {
-            project.plugins.apply("org.ajoberstar.release-opinion")
+            project.plugins.apply("org.ajoberstar.grgit")
+            project.plugins.apply("org.ajoberstar.reckon")
 
             if (!project.group) {
                 log.debug "Setting group from: '${project.group}' to: '${DEFAULT_GROUP}'."
@@ -166,13 +167,13 @@ class FimsPlugin implements Plugin<Project> {
                 }
             }
 
-            project.release {
-                grgit = Grgit.open(currentDir: project.file('.'))
-
-                versionStrategy RebuildVersionStrategyFix.INSTANCE
+            // ex. ./gradlew reckonTagCreate -Preckon.scope=minor -Preckon.stage=final
+            project.reckon {
+                normal = scopeFromProp()
+                preRelease = stageFromProp('beta', 'rc', 'final')
             }
-            // since release plugin is only applied to the root project, we only want to build the root project
-            project.tasks.release.dependsOn ":build", "publish"
+            
+            project.task("release", type: Release)
         } else {
             log.quiet("Skipping default fims release configuration for non rootProject: ${project.name}")
         }
