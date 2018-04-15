@@ -3,7 +3,7 @@ plugins {
     id "java-gradle-plugin"
     id "maven-publish"
     id 'org.ajoberstar.grgit' version '2.1.1'
-    id 'org.ajoberstar.reckon' version '0.5.0'
+    id 'org.ajoberstar.reckon' version '0.6.0-rc.1'
 }
 
 repositories {
@@ -19,7 +19,7 @@ dependencies {
     compile gradleApi()
 
     compile "org.ajoberstar:grgit:2.1.1"
-    compile "org.ajoberstar.reckon:reckon-gradle:0.5.0"
+    compile "org.ajoberstar.reckon:reckon-gradle:0.6.0-rc.1"
     compile "org.hidetake:gradle-ssh-plugin:2.8.0"
     compile "com.eriwen:gradle-js-plugin:2.14.1"
 }
