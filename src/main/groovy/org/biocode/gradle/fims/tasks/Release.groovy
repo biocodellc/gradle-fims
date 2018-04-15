@@ -13,8 +13,8 @@ import org.gradle.api.DefaultTask
 class Release extends DefaultTask {
 
     Release() {
-        // since release plugin is only applied to the root project, we only want to build the root project
-        dependsOn ":build", "reckonTagCreate", "reckonTagPush", "publish"
+        // : prefix only executes on root project
+        dependsOn ":build", ":reckonTagCreate", ":reckonTagPush", ":publish"
 
         project.afterEvaluate {
             ForceJarsResolver.forceJars(project, this.name)
