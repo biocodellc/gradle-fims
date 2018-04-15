@@ -35,22 +35,21 @@ class GenerateRestApiDocsTask extends Javadoc {
             doclet "com.tenxerconsulting.swagger.doclet.ServiceDoclet"
             addStringOption("host", "")
             addBooleanOption("skipUiFiles", true)
-
-            if (swagger.apiVersions) {
-                addStringOption("apiVersion", swagger.apiVersions[-1])
-                addStringOption("apiBasePath", swagger.apiBasePath + swagger.apiVersions[-1])
-            }
-
-            addStringOption("apiInfoFile", swagger.apiInfo)
         }
 
         project.afterEvaluate {
             ForceJarsResolver.forceJars(project, this.name)
+
+            if (swagger.apiVersions) {
+                this.options.addStringOption("apiVersion", swagger.apiVersions[-1])
+                this.options.addStringOption("apiBasePath", swagger.apiBasePath + swagger.apiVersions[-1])
+            }
+            this.options.addStringOption("apiInfoFile", swagger.apiInfo)
         }
 
         project.gradle.projectsEvaluated {
             if (this.source.isEmpty()) {
-                def tree = project.fileTree(dir: "${project.buildDir}/additional-sources")
+                def tree = project.fileTree(dir: "${project.buildDir}/additional-sources", include: "**/*.java")
                 this.setSource([project.sourceSets.doclet.allJava, tree])
             }
 
@@ -78,13 +77,11 @@ class GenerateRestApiDocsTask extends Javadoc {
         project.copy {
             from files
             into project.file("${project.buildDir}/additional-sources")
-            exclude 'org/springframework'
             exclude additionalSourcesExclude
-            include 'org/springframework/data/domain/*.java', 'biocode/fims/**/*.class'
             include additionalSourcesInclude
         }
 
-        super.setDestinationDir(destinationDir)
+        this.setDestinationDir(destinationDir)
         super.generate()
 
         def swaggerFile = project.file("${destinationDir}/service.json")

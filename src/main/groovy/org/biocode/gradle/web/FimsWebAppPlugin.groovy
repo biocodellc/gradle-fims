@@ -62,7 +62,7 @@ class FimsWebAppPlugin implements Plugin<Project> {
         }
 
         project.dependencies {
-            // TODO add custom swagger-doclet once we setup maven repo
+            doclet group: 'com.tenxerconsulting', name: 'swagger-doclet', version: '2.0.0-beta.1'
             doclet group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
             doclet group: 'io.swagger', name: 'swagger-models', version: '1.5.12'
         }
@@ -73,9 +73,6 @@ class FimsWebAppPlugin implements Plugin<Project> {
             doclet {
                 java {
                     srcDir 'src/main/java'
-//                    srcDir "${project.buildDir}/additional-sources/org/springframework/data/domain"
-                    exclude 'biocode/fims/rest/FimsDefaultServlet.java'
-//                    exclude "jaxb/**"
                 }
             }
         }
