@@ -115,4 +115,12 @@ class GenerateRestApiDocsTask extends Javadoc {
         this.project.configure(this.swagger, block)
     }
 
+    public void additionalSourcesInclude(Object... sources) {
+        this.additionalSourcesInclude.addAll(sources)
+    }
+
+    public void additionalSourcesExclude(Object... sources) {
+        this.additionalSourcesExclude.addAll(sources)
+    }
+
 }
