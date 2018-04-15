@@ -23,7 +23,7 @@ class ForceJarsResolver {
             project.configurations.each { cfg ->
                 cfg.resolutionStrategy.dependencySubstitution.all {
                     if (it.target instanceof ProjectComponentSelector) {
-                        it.useTarget it.oldRequested.toString()
+                        it.useTarget it.requested.toString()
                     }
                 }
             }
