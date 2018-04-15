@@ -7,6 +7,7 @@ import org.biocode.gradle.web.SwaggerConfig
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.javadoc.Javadoc
 
@@ -20,6 +21,11 @@ class GenerateRestApiDocsTask extends Javadoc {
     String description = "Generate Swagger rest documentation json file"
 
     private File destinationDir = project.file("${project.docsDir}/rest-api-docs")
+
+    @Optional
+    List<String> additionalSourcesInclude = []
+    @Optional
+    List<String> additionalSourcesExclude = []
 
     @Nested
     SwaggerConfig swagger = new SwaggerConfig()
@@ -44,7 +50,8 @@ class GenerateRestApiDocsTask extends Javadoc {
 
         project.gradle.projectsEvaluated {
             if (this.source.isEmpty()) {
-                this.setSource(project.sourceSets.doclet.allJava)
+                def tree = project.fileTree(dir: "${project.buildDir}/additional-sources")
+                this.setSource([project.sourceSets.doclet.allJava, tree])
             }
 
             if (!options.classpath) {
@@ -55,26 +62,28 @@ class GenerateRestApiDocsTask extends Javadoc {
                 options.docletpath = project.configurations.doclet.files.asType(List)
             }
         }
-
-        doFirst {
-            if (!swagger.apiVersions) {
-                throw new InvalidUserDataException("The property swagger.apiVersions must specify at least 1 version")
-            }
-
-            def files = []
-            project.configurations.additionalSources.files.each {
-                files.add(project.zipTree(it))
-            }
-            project.copy {
-                from files
-                into project.file("${project.buildDir}/additional-sources")
-            }
-        }
     }
 
     @TaskAction
     @Override
     void generate() {
+        if (!swagger.apiVersions) {
+            throw new InvalidUserDataException("The property swagger.apiVersions must specify at least 1 version")
+        }
+
+        def files = []
+        project.configurations.additionalSources.files.each {
+            files.add(project.zipTree(it))
+        }
+        project.copy {
+            from files
+            into project.file("${project.buildDir}/additional-sources")
+            exclude 'org/springframework'
+            exclude additionalSourcesExclude
+            include 'org/springframework/data/domain/*.java', 'biocode/fims/**/*.class'
+            include additionalSourcesInclude
+        }
+
         super.setDestinationDir(destinationDir)
         super.generate()
 

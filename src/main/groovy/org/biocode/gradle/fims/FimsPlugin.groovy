@@ -4,6 +4,7 @@ import org.biocode.gradle.app.CompositeExtension
 import org.biocode.gradle.fims.tasks.IntegrationTestJarTask
 import org.biocode.gradle.fims.tasks.IntegrationTestTask
 import org.biocode.gradle.fims.tasks.Release
+import org.biocode.gradle.fims.tasks.SourceJarTask
 import org.biocode.gradle.fims.tasks.VerifyMasterBranch
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -126,6 +127,8 @@ class FimsPlugin implements Plugin<Project> {
                 project.group = DEFAULT_GROUP
             }
 
+            def sourceJar = project.task("sourceJar", type: SourceJarTask)
+
             project.publishing {
                 repositories {
                     add(project.fims.mavenPublish())
@@ -133,6 +136,7 @@ class FimsPlugin implements Plugin<Project> {
                 publications {
                     java(MavenPublication) {
                         from project.components.java
+                        artifact sourceJar
                         pom.withXml {
                             def dependenciesNode = asNode().dependencies[0] ?: asNode().appendNode("dependencies")
 
@@ -161,7 +165,6 @@ class FimsPlugin implements Plugin<Project> {
                                 dependencyNode.appendNode('version', it.version)
                                 dependencyNode.appendNode('scope', "provided")
                             }
-
                         }
                     }
                 }

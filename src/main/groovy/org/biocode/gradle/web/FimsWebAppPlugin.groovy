@@ -73,9 +73,9 @@ class FimsWebAppPlugin implements Plugin<Project> {
             doclet {
                 java {
                     srcDir 'src/main/java'
-                    srcDir "${project.buildDir}/additional-sources/org/springframework/data/domain"
+//                    srcDir "${project.buildDir}/additional-sources/org/springframework/data/domain"
                     exclude 'biocode/fims/rest/FimsDefaultServlet.java'
-                    exclude "jaxb/**"
+//                    exclude "jaxb/**"
                 }
             }
         }
