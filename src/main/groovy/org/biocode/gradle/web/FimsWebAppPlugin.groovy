@@ -62,7 +62,7 @@ class FimsWebAppPlugin implements Plugin<Project> {
         }
 
         project.dependencies {
-            doclet group: 'com.tenxerconsulting', name: 'swagger-doclet', version: '2.0.0-beta.1'
+            doclet group: 'com.tenxerconsulting', name: 'swagger-doclet', version: '2.0.0-beta.2'
             doclet group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
             doclet group: 'io.swagger', name: 'swagger-models', version: '1.5.12'
         }

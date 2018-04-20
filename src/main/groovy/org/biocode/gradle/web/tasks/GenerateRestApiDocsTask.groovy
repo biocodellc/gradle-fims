@@ -44,6 +44,9 @@ class GenerateRestApiDocsTask extends Javadoc {
                 this.options.addStringOption("apiVersion", swagger.apiVersions[-1])
                 this.options.addStringOption("apiBasePath", swagger.apiBasePath + swagger.apiVersions[-1])
             }
+            if (swagger.apiSchemes) {
+                this.options.addMultilineStringsOption('schemes').setValue(swagger.apiSchemes)
+            }
             this.options.addStringOption("apiInfoFile", swagger.apiInfo)
         }
 

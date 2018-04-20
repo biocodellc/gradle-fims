@@ -7,6 +7,7 @@ import org.gradle.api.tasks.Input
  */
 class SwaggerConfig {
     @Input String[] apiVersions
+    @Input List<String> apiSchemes
     @Input String apiBasePath
     @Input String apiInfo
 }
