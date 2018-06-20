@@ -172,8 +172,8 @@ class FimsPlugin implements Plugin<Project> {
 
             // ex. ./gradlew reckonTagCreate -Preckon.scope=minor -Preckon.stage=final
             project.reckon {
-                normal = scopeFromProp()
-                preRelease = stageFromProp('beta', 'rc', 'final')
+                scopeFromProp()
+                stageFromProp('beta', 'rc', 'final')
             }
             
             project.task("release", type: Release)
