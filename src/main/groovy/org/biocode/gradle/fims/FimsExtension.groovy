@@ -24,7 +24,7 @@ class FimsExtension {
     MavenArtifactRepository mavenPublish() {
         credentialsSet()
         MavenArtifactRepository repo = project.repositories.maven {
-            url "http://repo.biocodellc.com/repository/maven-${this.project.version.toString().contains('dev') ? 'dev-releases' : 'releases'}"
+            url "https://repo.biocodellc.com/repository/maven-${this.project.version.toString().contains('dev') ? 'dev-releases' : 'releases'}"
             credentials {
                 username this.maven.username
                 password this.maven.password
@@ -36,7 +36,7 @@ class FimsExtension {
     MavenArtifactRepository mavenFims() {
         credentialsSet()
         MavenArtifactRepository repo = project.repositories.maven {
-            url "http://repo.biocodellc.com/repository/maven-private"
+            url "https://repo.biocodellc.com/repository/maven-private"
             credentials {
                 username this.maven.username
                 password this.maven.password

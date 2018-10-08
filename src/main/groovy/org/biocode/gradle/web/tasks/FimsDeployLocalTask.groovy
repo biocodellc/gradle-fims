@@ -13,7 +13,7 @@ class FimsDeployLocalTask extends DefaultTask {
 
     FimsDeployLocalTask() {
         dependsOn "cleanWar"
-        dependsOn "fatWar"
+        dependsOn "war"
         dependsOn "copyEnvironmentFiles"
 
         SelectEnvironmentTask.setEnvironment(project, this, "local")
@@ -22,10 +22,10 @@ class FimsDeployLocalTask extends DefaultTask {
     @TaskAction
     def run() {
         project.copy {
-            from project.fatWar.destinationDir
+            from project.war.destinationDir
             into deployDir
-            include project.fatWar.archiveName
-            rename project.fatWar.archiveName, "${project.name}.war"
+            include project.war.archiveName
+            rename project.war.archiveName, "${project.name}.war"
         }
     }
 }

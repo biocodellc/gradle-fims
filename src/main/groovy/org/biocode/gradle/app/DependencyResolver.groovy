@@ -20,10 +20,6 @@ class DependencyResolver {
         log.info("resolveDependency forceJars: ${forceJars}, dependencyNotation: ${dependencyNotation}, projectPath: ${projectPath}")
 
         def dependency = project.dependencies.create(dependencyNotation) {
-            // TODO fix this. If we don't specify transitive, then the built war contains all dependencies when calling deployFims
-            // However  If we do specify transitive,then any time a project doesn't contain the sources for commons, etc then the war will be missing
-            // all of commons dependencies
-            transitive = false
             configuration = configuration
         }
 

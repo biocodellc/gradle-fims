@@ -20,8 +20,6 @@ dependencies {
 
     compile "org.ajoberstar:grgit:2.1.1"
     compile "org.ajoberstar.reckon:reckon-gradle:0.7.0"
-    compile "org.hidetake:gradle-ssh-plugin:2.8.0"
-    compile "com.eriwen:gradle-js-plugin:2.14.1"
 }
 
 gradlePlugin {
@@ -46,7 +44,7 @@ group = "org.biocode"
 publishing {
     repositories {
         maven {
-            url "http://repo.biocodellc.com/repository/maven-${project.version.toString().contains('dev') ? 'dev-releases' : 'releases'}"
+            url "https://repo.biocodellc.com/repository/maven-${project.version.toString().contains('dev') ? 'dev-releases' : 'releases'}"
             credentials {
                 username mavenUser
                 password mavenPass

@@ -55,15 +55,11 @@ class FimsPlugin implements Plugin<Project> {
 
         project.configurations {
             provided
-            server
-            serverRuntime
         }
 
         project.sourceSets {
             main {
-                compileClasspath += project.configurations.server
                 compileClasspath += project.configurations.provided
-                runtimeClasspath += project.configurations.serverRuntime
             }
         }
 
@@ -74,8 +70,6 @@ class FimsPlugin implements Plugin<Project> {
         project.idea {
             module {
                 scopes.PROVIDED.plus += [project.configurations.provided]
-                scopes.COMPILE.plus += [project.configurations.server]
-                scopes.RUNTIME.plus += [project.configurations.serverRuntime]
             }
         }
 
@@ -84,7 +78,7 @@ class FimsPlugin implements Plugin<Project> {
     def configureTests(Project project) {
         project.configurations {
             testCompile.extendsFrom provided
-            testCompile.extendsFrom server
+            testCompile.extendsFrom compile
             integrationTestCompile.extendsFrom testCompile
             integrationTestRuntime.extendsFrom testRuntime
             integrationTestOutput.extendsFrom integrationTestCompile
@@ -147,15 +141,6 @@ class FimsPlugin implements Plugin<Project> {
                                     dep.name == it.artifactId.text()
                                 }
                             }.each { it.scope*.value = 'compile'}
-
-                            // add all server configuration deps to the compile scope
-                            project.configurations.server.allDependencies.each {
-                                def dependencyNode = dependenciesNode.appendNode('dependency')
-                                dependencyNode.appendNode('groupId', it.group)
-                                dependencyNode.appendNode('artifactId', it.name)
-                                dependencyNode.appendNode('version', it.version)
-                                dependencyNode.appendNode('scope', "compile")
-                            }
 
                             // add all provided configuration deps to the provided scope
                             project.configurations.provided.allDependencies.each {
